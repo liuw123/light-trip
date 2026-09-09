@@ -811,7 +811,137 @@ The user can correct ambiguity, exclude records, or cancel. Warnings do not disc
 
 The repository layer performs one transaction. If any required model fails validation, no partial trip is stored.
 
-### 10.2 Structured Markdown extension
+### 10.2 Canonical MVP import example
+
+The following document is the reference fixture for the first importer implementation. It is intentionally fictional, contains no cost fields, and exercises every MVP booking category. Users may omit optional columns or sections; the Import Review page must surface missing or ambiguous values instead of rejecting the whole document.
+
+Canonical conventions demonstrated by the fixture:
+
+- Use one H1 heading for the trip title.
+- Put trip metadata in blockquotes using `Key: Value` pairs.
+- Use ISO `YYYY-MM-DD` dates and 24-hour local times when possible.
+- Start each itinerary section with `## Day N — YYYY-MM-DD — Title`.
+- Use an em dash (`—`) for an intentionally empty table cell.
+- Keep booking references fictional in examples and mask real references in the UI.
+- Treat checklist items under `## Reminders` as confirmation tasks, not timeline activities.
+
+````markdown
+# Western Sichuan Autumn Trip
+
+> Dates: 2026-10-04 to 2026-10-08
+> Destination: Chengdu, Huanglong, and Jiuzhaigou
+> Time zone: Asia/Shanghai
+> Travelers: 2
+
+## Day 1 — 2026-10-04 — Arrive in Chengdu
+
+| Time | Type | Plan | From | To / Location | Booking | Buffer | Confirmation | Notes |
+|---|---|---|---|---|---|---|---|---|
+| 12:30–15:30 | Flight | Fly to Chengdu | Shanghai Hongqiao Airport | Chengdu Shuangliu Airport | MU0001 | 90 min | Confirmed | Example flight number |
+| 15:30–17:15 | Ground transport | Collect baggage and transfer to hotel | Chengdu Shuangliu Airport | East Railway Station Hotel | — | 30 min | Required | Allow extra holiday traffic time |
+| 18:00–19:00 | Meal | Dinner near the hotel | — | Chengdu East Railway Station | — | — | — | Keep the evening flexible |
+
+## Day 2 — 2026-10-05 — Huanglong and Jiuzhaigou
+
+| Time | Type | Plan | From | To / Location | Booking | Buffer | Confirmation | Notes |
+|---|---|---|---|---|---|---|---|---|
+| 07:40–08:12 | Reminder | Arrive and board | Chengdu East Railway Station | Platform shown in railway app | C0001 | 30 min | Required | Identity document required |
+| 08:12–10:01 | Train | Travel to Huanglongjiuzhai | Chengdu East Railway Station | Huanglongjiuzhai Station | C0001 | — | Confirmed | First class |
+| 10:10–11:20 | Ground transport | Reserved car to Huanglong | Huanglongjiuzhai Station | Huanglong Scenic Area | CAR-01 | 20 min | Confirmed | Meet at station exit |
+| 11:20–15:30 | Attraction | Visit Huanglong | Visitor Center | Five-Color Pond route | HL-01 | 30 min | Required | Use the uphill cableway booking |
+| 15:30–18:30 | Ground transport | Reserved car to Jiuzhaigou | Huanglong Scenic Area | Jiuzhaigou Hotel | CAR-01 | 60 min | Confirmed | Holiday road buffer included |
+| 18:30–19:00 | Accommodation | Check in | — | Jiuzhaigou Hotel | HOTEL-02 | — | Confirmed | Two-night stay |
+
+## Day 3 — 2026-10-06 — Jiuzhaigou Full Day
+
+| Time | Type | Plan | From | To / Location | Booking | Buffer | Confirmation | Notes |
+|---|---|---|---|---|---|---|---|---|
+| 07:50–08:20 | Ground transport | Walk to the entrance and complete checks | Jiuzhaigou Hotel | Scenic Area Entrance | JZG-VIP-01 | 30 min | Required | Bring identity document |
+| 08:20–12:00 | Attraction | Rize Valley highlights | Scenic Area Entrance | Five-Flower Lake and Pearl Shoal | JZG-VIP-01 | — | Confirmed | Follow the official VIP bus route |
+| 12:00–12:45 | Meal | Lunch | — | Nuorilang Service Center | — | — | — | Avoid the peak queue if possible |
+| 12:45–17:00 | Attraction | Zechawa and Shuzheng Valley highlights | Nuorilang Service Center | Long Lake, Five-Color Pond, and Shuzheng Lakes | JZG-VIP-01 | 30 min | Confirmed | Exit before the final bus rush |
+
+## Day 4 — 2026-10-07 — Jiuzhaigou Half Day and Chengdu
+
+| Time | Type | Plan | From | To / Location | Booking | Buffer | Confirmation | Notes |
+|---|---|---|---|---|---|---|---|---|
+| 08:15–11:40 | Attraction | Shuzheng Valley revisit | Scenic Area Entrance | Rhinoceros Lake and Shuzheng Lakes | JZG-STD-02 | 30 min | Required | Leave the scenic area on time |
+| 12:50–15:50 | Ground transport | Reserved car to station | Jiuzhaigou Hotel | Huanglongjiuzhai Station | CAR-01 | 60 min | Confirmed | Latest safe departure is 12:50 |
+| 16:25–18:07 | Train | Return to Chengdu | Huanglongjiuzhai Station | Chengdu East Railway Station | C0002 | 30 min | Confirmed | First class |
+| 18:20–19:00 | Ground transport | Transfer to hotel | Chengdu East Railway Station | Central Chengdu Hotel | — | 20 min | Required | Use the official taxi queue |
+
+## Day 5 — 2026-10-08 — Depart Chengdu
+
+| Time | Type | Plan | From | To / Location | Booking | Buffer | Confirmation | Notes |
+|---|---|---|---|---|---|---|---|---|
+| 12:30–13:30 | Accommodation | Check out and depart | Central Chengdu Hotel | Chengdu Tianfu Airport | HOTEL-03 | 60 min | Required | Confirm traffic before leaving |
+| 16:00–18:35 | Flight | Fly to Shanghai | Chengdu Tianfu Airport | Shanghai Pudong Airport | MU0002 | 120 min | Confirmed | Example flight number |
+
+## Bookings
+
+### Flights
+
+| Service | Date | Route | Departure | Arrival | Provider | Status | Reference | Official link | Notes |
+|---|---|---|---|---|---|---|---|---|---|
+| MU0001 | 2026-10-04 | Shanghai Hongqiao → Chengdu Shuangliu | 12:30 | 15:30 | Example Airline | Confirmed | FLIGHT-OUT-EXAMPLE | https://example.com/flight | Example only |
+| MU0002 | 2026-10-08 | Chengdu Tianfu → Shanghai Pudong | 16:00 | 18:35 | Example Airline | Confirmed | FLIGHT-IN-EXAMPLE | https://example.com/flight | Example only |
+
+### Trains
+
+| Service | Date | Route | Departure | Arrival | Seat | Status | Reference | Notes |
+|---|---|---|---|---|---|---|---|---|
+| C0001 | 2026-10-05 | Chengdu East → Huanglongjiuzhai | 08:12 | 10:01 | First class | Confirmed | TRAIN-OUT-EXAMPLE | Arrive 30 minutes early |
+| C0002 | 2026-10-07 | Huanglongjiuzhai → Chengdu East | 16:25 | 18:07 | First class | Confirmed | TRAIN-IN-EXAMPLE | Arrive 30 minutes early |
+
+### Hotels
+
+| Hotel | Check-in | Check-out | Location | Status | Reference | Contact | Notes |
+|---|---|---|---|---|---|---|---|
+| East Railway Station Hotel | 2026-10-04 | 2026-10-05 | Chengdu East Railway Station | Confirmed | HOTEL-01 | — | One night |
+| Jiuzhaigou Hotel | 2026-10-05 | 2026-10-07 | Jiuzhaigou Scenic Area Entrance | Confirmed | HOTEL-02 | — | Two nights |
+| Central Chengdu Hotel | 2026-10-07 | 2026-10-08 | Central Chengdu | Confirmed | HOTEL-03 | — | One night |
+
+### Attractions
+
+| Attraction | Visit date | Entry window | Product | Status | Reference | Official link | Notes |
+|---|---|---|---|---|---|---|---|
+| Huanglong Scenic Area | 2026-10-05 | 11:20–12:00 | Admission + uphill cableway + sightseeing bus | Confirmed | HL-01 | https://example.com/huanglong | Example only |
+| Jiuzhaigou National Park | 2026-10-06 | 08:00–09:00 | Admission + official VIP sightseeing bus | Confirmed | JZG-VIP-01 | https://example.com/jiuzhaigou | Example only |
+| Jiuzhaigou National Park | 2026-10-07 | 08:00–09:00 | Admission + standard sightseeing bus | Confirmed | JZG-STD-02 | https://example.com/jiuzhaigou | Example only |
+
+### Ground Transport
+
+| Reference | Date | Route | Pickup | Provider | Status | Contact | Notes |
+|---|---|---|---|---|---|---|---|
+| CAR-01 | 2026-10-05 to 2026-10-07 | Station → Huanglong → Jiuzhaigou → Station | Huanglongjiuzhai Station exit | Example Car Service | Confirmed | — | One reservation covers the complete route |
+
+## Reminders
+
+- [ ] Recheck the Huanglong admission, uphill cableway, and sightseeing-bus booking.
+- [ ] Recheck the Jiuzhaigou VIP admission and bus booking.
+- [ ] Recheck the second-day Jiuzhaigou admission and standard bus booking.
+- [ ] Confirm the reserved-car driver's meeting point one day before pickup.
+- [ ] Download offline copies of all booking details before departure.
+
+## Important Notes
+
+- All times use `Asia/Shanghai`.
+- Holiday traffic buffers are already included in the timeline.
+- A booking marked `Required` needs confirmation during Import Review.
+- Links and identifiers in this sample are fictional and must not be used for real travel.
+````
+
+Expected import result:
+
+- 1 trip containing 5 days and 19 timeline items
+- 2 flight, 2 train, 3 hotel, 3 attraction, and 1 ground-transport booking
+- Booking references linked to timeline items with the same `Booking` value
+- 5 confirmation tasks derived from the Reminders checklist
+- Original Markdown preserved unchanged in `SourceDocument.rawMarkdown`
+
+This fixture should be copied into the test target as `canonical-trip.md`. Parser changes that alter its expected result require an intentional fixture update and test review.
+
+### 10.3 Structured Markdown extension
 
 Future exports may include a fenced `light-trip` JSON block:
 
@@ -828,11 +958,11 @@ Future exports may include a fenced `light-trip` JSON block:
 
 When present, the importer uses this block as the structured source and continues to preserve and render the human-readable Markdown surrounding it.
 
-### 10.3 Next-item calculation
+### 10.4 Next-item calculation
 
 The Overview calculates the next item using the trip timezone rather than the device timezone. Untimed items do not replace the next timed item unless explicitly marked important.
 
-### 10.4 Local notifications
+### 10.5 Local notifications
 
 - Notification permission is requested only when the user first enables a reminder.
 - Notifications are scheduled from `ReminderRule` records.
@@ -840,7 +970,7 @@ The Overview calculates the next item using the trip timezone rather than the de
 - Timezone-aware calendar triggers are preferred over fixed UTC timestamps.
 - The app displays all reminder rules even if system notification permission is denied.
 
-### 10.5 Search
+### 10.6 Search
 
 Search spans:
 
@@ -851,7 +981,7 @@ Search spans:
 
 Search remains local to the device in the MVP.
 
-### 10.6 Export
+### 10.7 Export
 
 The user can export the preserved Markdown. Later versions may generate normalized Light Trip Markdown from structured records, but the MVP must never overwrite the imported source silently.
 
