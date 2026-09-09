@@ -7,13 +7,14 @@
 - Minimum deployment target: iOS/iPadOS 17
 - UI framework: SwiftUI
 - Persistence: SwiftData
-- Primary import format: Markdown from the clipboard or a `.md` file
+- Strict import contract: versioned Light Trip JSON from the clipboard, a `.json` file, or an embedded `light-trip` block
+- Convenience import format: Markdown from the clipboard or a `.md` file
 
-This document defines the initial product scope, information architecture, page-level design, data model, Markdown import behavior, and implementation boundaries for Light Trip.
+This document defines the initial product scope, information architecture, page-level design, data model, JSON contract, Markdown import behavior, and implementation boundaries for Light Trip.
 
 ## 2. Product vision
 
-Light Trip is a lightweight, offline-first trip companion. It converts a human-readable Markdown itinerary into a structured mobile experience that answers four questions quickly:
+Light Trip is a lightweight, offline-first trip companion. It imports a strict JSON trip contract or converts a human-readable Markdown itinerary into a structured mobile experience that answers four questions quickly:
 
 1. What is happening next?
 2. What is the complete plan for today?
@@ -36,9 +37,9 @@ The current or next activity must be visible within one interaction. Important t
 
 An imported trip remains fully usable without a network connection. External links are enhancements, not dependencies for reading the plan.
 
-### 3.4 Lossless import
+### 3.4 Strict contract and lossless source import
 
-Light Trip preserves the original Markdown even when some content cannot be parsed into structured records.
+Versioned JSON is the canonical interchange contract. Markdown is a best-effort convenience format. Light Trip preserves the original source content even when some Markdown cannot be parsed into structured records.
 
 ### 3.5 Explicit clipboard access
 
@@ -46,7 +47,7 @@ The application reads the clipboard only after the user taps a Paste control. It
 
 ### 3.6 Native and lightweight
 
-The MVP uses Apple frameworks and avoids third-party dependencies. The architecture should remain easy to understand, test, and evolve.
+The MVP uses Apple frameworks and avoids third-party dependencies. JSON uses `Codable`; Markdown uses a deterministic local parser. The architecture should remain easy to understand, test, and evolve.
 
 ## 4. MVP scope
 
@@ -57,10 +58,10 @@ The MVP uses Apple frameworks and avoids third-party dependencies. The architect
 - Day-by-day timeline
 - Flight, train, hotel, attraction, and ground-transport bookings
 - Important notes, buffers, and latest-safe-departure times
-- Markdown import from the clipboard
-- Markdown import from a file
+- Strict Light Trip JSON import from the clipboard or a file
+- Deterministic Markdown import from the clipboard or a file
 - Import preview, validation, and conflict handling
-- Original Markdown reader and source view
+- Original source reader for JSON and Markdown
 - Manual editing of trips, activities, and bookings
 - Local notifications
 - Local persistence with SwiftData
@@ -77,8 +78,10 @@ The MVP uses Apple frameworks and avoids third-party dependencies. The architect
 - Shared multi-user trip editing
 - Map-based route planning
 - Ticket image and PDF attachment storage
+- LLM-assisted Markdown parsing
+- YAML import
 
-The data model should not contain placeholder cost properties. If cost data exists in imported Markdown, it remains available only in the preserved source document.
+The data model should not contain placeholder cost properties. If cost data exists in an imported source, it remains available only in the preserved source document.
 
 ## 5. Navigation architecture
 
@@ -141,7 +144,7 @@ The MVP has ten primary pages and two reusable editor sheets.
 | 4 | Activity Detail | Show one itinerary item's complete operational detail |
 | 5 | Bookings | Organize all reservations by date and category |
 | 6 | Booking Detail | Show complete information for one reservation |
-| 7 | Original Plan | Preserve and display the imported Markdown |
+| 7 | Original Plan | Preserve and display the imported JSON or Markdown source |
 | 8 | Import | Accept and validate clipboard or file input |
 | 9 | Import Review | Preview parsed changes before committing them |
 | 10 | Trip Settings | Configure metadata, reminders, export, archive, or deletion |
@@ -169,7 +172,7 @@ The Trips page is the app's root and the user's trip library.
 
 - Open a trip
 - Create a trip manually
-- Import Markdown
+- Import a trip
 - Archive a completed trip
 - Delete a trip after confirmation
 
@@ -183,7 +186,7 @@ Trips appear in the sidebar. Selecting a trip opens its Overview in the detail a
 
 #### Empty state
 
-The empty state explains the main value proposition and offers two actions: Import Markdown and Create Trip.
+The empty state explains the main value proposition and offers two actions: Import Trip and Create Trip.
 
 #### Accessibility
 
@@ -423,32 +426,32 @@ The Original Plan page guarantees that imported information remains accessible e
 
 #### Modes
 
-- Reader: mobile-friendly rendering of headings, lists, tables, links, and emphasis
-- Source: unmodified Markdown text
+- Reader: mobile-friendly Markdown rendering or a formatted JSON tree
+- Source: unmodified source text with JSON syntax highlighting when applicable
 
 #### Functions
 
 - Search within the document
 - Collapse and expand sections
-- Copy the complete Markdown
-- Export a `.md` file
+- Copy the complete source
+- Export the original `.json`, `.md`, `.markdown`, or plain-text format
 - Start an update import
-- Show the last import date and parser version
+- Show the source format, schema or parser version, and last import date
 
 #### Responsive behavior
 
-Markdown tables transform into stacked cards on compact-width devices. On iPad, an optional section outline appears beside the document.
+Markdown tables transform into stacked cards on compact-width devices. JSON uses collapsible objects and arrays. On iPad, an optional section outline or JSON tree appears beside the document.
 
 ### 7.8 Import
 
 #### Purpose
 
-The Import page captures Markdown and starts the parsing workflow.
+The Import page captures Light Trip JSON or Markdown and starts the appropriate validation or parsing workflow.
 
 #### Import sources
 
 - Paste from clipboard
-- Select a `.md`, `.markdown`, or plain-text file
+- Select a `.lighttrip.json`, `.json`, `.md`, `.markdown`, or plain-text file
 - Paste or edit text manually
 - Load a bundled sample trip
 
@@ -456,20 +459,22 @@ The Import page captures Markdown and starts the parsing workflow.
 
 - Explicit user-initiated clipboard access
 - Text editing before parsing
-- Basic validation
-- Detection of a probable itinerary
+- Automatic format detection with a visible override
+- Strict JSON contract validation
+- Deterministic Markdown itinerary detection and parsing
 - Selection of Create New Trip or Update Existing Trip
 
 #### Validation before review
 
 - Input is not empty
 - Input is valid text
-- At least a title, date, day heading, timeline table, or booking table is detectable
-- Unsupported text is allowed and preserved
+- JSON input is syntactically valid and matches a supported `schemaVersion`
+- Markdown contains at least a title, date, day heading, timeline table, or booking table
+- Unsupported Markdown is allowed and preserved
 
 #### Error design
 
-Validation errors explain how to correct the input. The pasted text remains in the editor after an error.
+JSON validation errors identify the failing field and contract rule. Markdown diagnostics explain ambiguity without discarding source content. The pasted text remains in the editor after an error.
 
 ### 7.9 Import Review
 
@@ -480,6 +485,7 @@ The Import Review page prevents silent or incorrect data changes.
 #### Summary
 
 - Detected trip title and date range
+- Detected source format and schema or parser version
 - Number of trip days
 - Number of timeline items
 - Booking counts by category
@@ -492,7 +498,7 @@ The Import Review page prevents silent or incorrect data changes.
 - Days and timeline items
 - Bookings
 - Important notes
-- Unrecognized Markdown
+- Unrecognized Markdown, when applicable
 
 #### Actions
 
@@ -535,7 +541,8 @@ Trip Settings controls metadata, reminders, document lifecycle, and destructive 
 
 #### Document actions
 
-- Export Markdown
+- Export canonical Light Trip JSON
+- Export or copy the preserved original source
 - Reimport or replace the trip
 - View import metadata
 - Archive the trip
@@ -704,9 +711,11 @@ enum BookingDetails: Codable, Hashable {
 @Model
 final class SourceDocument {
     @Attribute(.unique) var id: UUID
-    var rawMarkdown: String
+    var rawContent: String
+    var sourceFormatRawValue: String
     var importedAt: Date
-    var parserVersion: Int
+    var contractVersion: Int?
+    var parserVersion: Int?
     var sourceName: String?
     var contentHash: String
     var trip: Trip?
@@ -750,30 +759,48 @@ enum BookingCategory: String, Codable, CaseIterable {
     case groundTransport
     case other
 }
+
+enum SourceFormat: String, Codable, CaseIterable {
+    case lightTripJSON
+    case markdown
+    case plainText
+}
 ```
 
 ## 10. Core functionality
 
-### 10.1 Markdown import pipeline
+### 10.1 Import pipeline
 
 ```mermaid
-flowchart LR
-    Input[Clipboard or file] --> Normalize[Normalize text]
-    Normalize --> Parse[Parse sections]
-    Parse --> Draft[Create import draft]
+flowchart TD
+    Input[Clipboard or file] --> Detect[Detect format]
+    Detect --> JSON[Decode strict JSON]
+    Detect --> Markdown[Parse Markdown locally]
+    JSON --> Validate[Validate contract]
+    Validate --> Draft[Create import draft]
+    Markdown --> Draft
     Draft --> Review[User review]
     Review --> Commit[Atomic save]
 ```
 
-#### Stage 1: Normalize
+#### Stage 1: Preserve and detect
 
+- Preserve the complete original input before normalization.
+- Detect standalone JSON, a Markdown `light-trip` block, Markdown, or plain text.
 - Normalize line endings
 - Remove UTF-8 byte-order marks
-- Preserve the original source separately
 - Normalize full-width punctuation only for matching, not for display
-- Detect the document language without requiring localization-specific headings
 
-#### Stage 2: Parse
+#### Stage 2A: Decode strict JSON
+
+- Decode with `JSONDecoder` into versioned Codable contract types.
+- Require a supported integer `schemaVersion`.
+- Validate required fields, enum values, identifiers, relationships, dates, times, and the IANA timezone.
+- Do not coerce malformed values or silently repair invalid JSON.
+- Ignore unknown additive fields for forward compatibility while preserving the original JSON.
+- Return field-addressable diagnostics such as `days[1].items[3].startTime`.
+
+#### Stage 2B: Parse Markdown deterministically
 
 The parser recognizes:
 
@@ -787,7 +814,7 @@ The parser recognizes:
 - Lists of warnings, confirmations, and checklists
 - Links and contact numbers
 
-Cost-like columns are skipped by structured parsing and remain only in `SourceDocument.rawMarkdown`.
+The MVP parser is a deterministic local utility with no network dependency. Cost-like columns are skipped by structured parsing and remain only in `SourceDocument.rawContent`.
 
 #### Stage 3: Build an import draft
 
@@ -798,7 +825,7 @@ struct TripImportDraft: Sendable {
     var trip: TripDraft
     var days: [TripDayDraft]
     var bookings: [BookingDraft]
-    var unrecognizedSections: [MarkdownSection]
+    var unrecognizedContent: [SourceFragment]
     var diagnostics: [ImportDiagnostic]
 }
 ```
@@ -811,7 +838,56 @@ The user can correct ambiguity, exclude records, or cancel. Warnings do not disc
 
 The repository layer performs one transaction. If any required model fails validation, no partial trip is stored.
 
-### 10.2 Canonical MVP import example
+### 10.2 Strict Light Trip JSON contract
+
+JSON is the canonical interchange, backup, and round-trip format. The contract is independent of SwiftData persistence models so storage migrations do not automatically break imported files.
+
+YAML is intentionally not a contract format in the MVP. Its indentation and implicit scalar typing introduce avoidable ambiguity, and Swift does not provide a first-party YAML decoder comparable to `Codable` JSON support.
+
+Required contract rules:
+
+- `schemaVersion` is a required positive integer.
+- Stable entity identifiers are UUID strings.
+- Calendar dates use ISO `YYYY-MM-DD`.
+- Local times use 24-hour `HH:mm`; cross-timezone timestamps use RFC 3339.
+- The trip uses an IANA timezone such as `Asia/Shanghai`.
+- Persisted categories and statuses use documented string enums.
+- A missing optional field and an explicit `null` have the same meaning unless the schema states otherwise.
+- Derived UI values such as countdowns and next-item state are never serialized.
+- Costs and expense fields are not part of schema version 1.
+
+The repository should contain these contract artifacts:
+
+```text
+docs/
+├── schema/light-trip.schema.json
+└── examples/
+    ├── sample-trip.lighttrip.json
+    └── sample-trip.md
+```
+
+Minimal contract shape:
+
+```json
+{
+  "schemaVersion": 1,
+  "trip": {
+    "id": "7c7d5c44-67c1-4f18-913b-c7bf21cb403a",
+    "title": "Western Sichuan Autumn Trip",
+    "destination": "Chengdu, Huanglong, and Jiuzhaigou",
+    "startDate": "2026-10-04",
+    "endDate": "2026-10-08",
+    "timeZone": "Asia/Shanghai"
+  },
+  "days": [],
+  "bookings": [],
+  "reminders": []
+}
+```
+
+The JSON Schema is the normative contract for files. Codable types implement that contract in the app, and contract fixtures verify both decoding and schema-version migration.
+
+### 10.3 Canonical Markdown convenience example
 
 The following document is the reference fixture for the first importer implementation. It is intentionally fictional, contains no cost fields, and exercises every MVP booking category. Users may omit optional columns or sections; the Import Review page must surface missing or ambiguous values instead of rejecting the whole document.
 
@@ -937,13 +1013,13 @@ Expected import result:
 - 2 flight, 2 train, 3 hotel, 3 attraction, and 1 ground-transport booking
 - Booking references linked to timeline items with the same `Booking` value
 - 5 confirmation tasks derived from the Reminders checklist
-- Original Markdown preserved unchanged in `SourceDocument.rawMarkdown`
+- Original Markdown preserved unchanged in `SourceDocument.rawContent`
 
 This fixture should be copied into the test target as `canonical-trip.md`. Parser changes that alter its expected result require an intentional fixture update and test review.
 
-### 10.3 Structured Markdown extension
+### 10.4 Structured Markdown carrier
 
-Future exports may include a fenced `light-trip` JSON block:
+Markdown may carry the strict contract in a fenced `light-trip` JSON block:
 
 ````markdown
 ```light-trip
@@ -956,13 +1032,33 @@ Future exports may include a fenced `light-trip` JSON block:
 ```
 ````
 
-When present, the importer uses this block as the structured source and continues to preserve and render the human-readable Markdown surrounding it.
+When present, the importer treats this block as authoritative, validates it exactly like a standalone JSON file, and does not derive competing structured values from the surrounding Markdown. The complete Markdown remains available as the preserved human-readable source.
 
-### 10.4 Next-item calculation
+### 10.5 Post-MVP TODO: LLM-assisted Markdown parsing
+
+A future release may offer an LLM parser for prose-heavy or irregular Markdown that the deterministic parser cannot interpret reliably. This is an optional enhancement, not a replacement for the JSON contract or the local parser.
+
+Implementation boundaries:
+
+- Introduce a `TripImportParser` protocol so deterministic and LLM parsers produce the same `TripImportDraft` result.
+- Keep deterministic parsing as the default and offline fallback.
+- Invoke an LLM only after an explicit user action; never upload trip content automatically or in the background.
+- Clearly disclose when source content will leave the device and minimize the submitted content where practical.
+- Treat imported text as untrusted data, never as executable instructions for the model or app.
+- Require the LLM to return only the versioned Light Trip JSON contract.
+- Reject output that fails JSON decoding or contract validation; do not repair it silently.
+- Preserve provenance, parser kind, model identifier, and per-record confidence or diagnostics.
+- Always show Import Review before persistence and highlight low-confidence or newly inferred fields.
+- Never allow an LLM result to remove or replace stored records without an explicit diff confirmation.
+- Keep the original source so users can verify every extracted value.
+
+Before release, evaluate the LLM parser against the same fixture suite as the deterministic parser. Track field accuracy, invented-value rate, missing-record rate, latency, and failure behavior. Network failure, model unavailability, or an unsupported response must return the user to deterministic parsing without losing input.
+
+### 10.6 Next-item calculation
 
 The Overview calculates the next item using the trip timezone rather than the device timezone. Untimed items do not replace the next timed item unless explicitly marked important.
 
-### 10.5 Local notifications
+### 10.7 Local notifications
 
 - Notification permission is requested only when the user first enables a reminder.
 - Notifications are scheduled from `ReminderRule` records.
@@ -970,20 +1066,20 @@ The Overview calculates the next item using the trip timezone rather than the de
 - Timezone-aware calendar triggers are preferred over fixed UTC timestamps.
 - The app displays all reminder rules even if system notification permission is denied.
 
-### 10.6 Search
+### 10.8 Search
 
 Search spans:
 
 - Activity titles and notes
 - Locations, origins, and destinations
 - Booking providers and service numbers
-- Original Markdown
+- Original JSON or Markdown source
 
 Search remains local to the device in the MVP.
 
-### 10.7 Export
+### 10.9 Export
 
-The user can export the preserved Markdown. Later versions may generate normalized Light Trip Markdown from structured records, but the MVP must never overwrite the imported source silently.
+The user can export canonical Light Trip JSON generated from structured records and can separately export the preserved original source. Human-readable Markdown export is optional, but it must never overwrite the original source silently.
 
 ## 11. Application architecture
 
@@ -993,7 +1089,7 @@ flowchart TD
     Features --> Domain[Domain models and services]
     Domain --> Repositories[Repository protocols]
     Repositories --> SwiftData[SwiftData persistence]
-    Features --> Importer[Markdown import pipeline]
+    Features --> Importer[JSON and Markdown import]
     Features --> Notifications[Notification scheduler]
 ```
 
@@ -1057,7 +1153,9 @@ LightTrip/
 │   ├── Import/
 │   └── TripSettings/
 ├── Services/
-│   ├── MarkdownImport/
+│   ├── TripImport/
+│   │   ├── JSONContract/
+│   │   └── Markdown/
 │   ├── Notifications/
 │   ├── Search/
 │   └── Export/
@@ -1070,7 +1168,9 @@ LightTrip/
     └── SampleTrips/
 
 LightTripTests/
-├── MarkdownImport/
+├── TripImport/
+│   ├── JSONContract/
+│   └── Markdown/
 ├── Domain/
 ├── Persistence/
 └── Fixtures/
@@ -1080,7 +1180,7 @@ LightTripUITests/
 
 ### 11.3 Dependency policy
 
-The MVP uses no third-party packages. Protocol boundaries allow a richer Markdown parser, synchronization service, or attachment store to be introduced later without rewriting page code.
+The MVP uses no third-party packages. Protocol boundaries allow an LLM-backed Markdown parser, synchronization service, or attachment store to be introduced later without rewriting page code.
 
 ## 12. Responsive and visual design
 
@@ -1131,15 +1231,16 @@ When enabled, iCloud provides cross-device synchronization between the user's iP
 
 ### 13.3 Migration
 
-- Every structured import payload has a schema version.
-- Every source document stores the parser version.
+- Every Light Trip JSON payload has a schema version.
+- Every source document stores its format and the applicable contract or parser version.
 - Persisted enums use stable raw values.
-- Model migrations must preserve raw Markdown even if a structured migration fails.
+- Model migrations must preserve the original source even if a structured migration fails.
 
 ## 14. Privacy and security
 
 - All trip data is local by default.
 - Clipboard reads require a user-initiated Paste action.
+- Any future cloud LLM parsing requires a separate user-initiated action and clear disclosure that selected source content leaves the device.
 - Reservation references are masked by default.
 - No analytics SDK is required for the MVP.
 - No booking credentials or payment information are stored.
@@ -1148,9 +1249,15 @@ When enabled, iCloud provides cross-device synchronization between the user's iP
 
 ## 15. Testing strategy
 
-### 15.1 Parser tests
+### 15.1 Contract and parser tests
 
+- Valid versioned Light Trip JSON
+- JSON syntax, required-field, enum, relationship, date, and timezone failures
+- Unsupported and future schema versions
+- Unknown additive JSON fields
+- JSON round-trip stability
 - Current Jiuzhaigou Markdown plan
+- Canonical Markdown convenience fixture
 - Different heading languages and numbering formats
 - Missing columns
 - Reordered columns
@@ -1195,11 +1302,13 @@ When enabled, iCloud provides cross-device synchronization between the user's iP
 - Create the universal Xcode project
 - Add SwiftData models and repositories
 - Add typed navigation
-- Add test targets and the Jiuzhaigou fixture
+- Add test targets, JSON contract fixtures, and the Jiuzhaigou Markdown fixture
 
 ### Phase 2: Import pipeline
 
-- Build normalization and section parsing
+- Define Codable contract types and `light-trip.schema.json`
+- Implement strict JSON decoding, validation, and version handling
+- Build deterministic Markdown normalization and section parsing
 - Parse trip metadata, days, timeline items, and bookings
 - Implement diagnostics and duplicate matching
 - Implement atomic persistence
@@ -1231,6 +1340,7 @@ When enabled, iCloud provides cross-device synchronization between the user's iP
 - Enable iCloud synchronization
 - Ticket image and PDF attachments
 - Share extension for Markdown import
+- Optional LLM-assisted Markdown parser behind `TripImportParser`
 - Widgets and Live Activities
 - Optional live transport-status integrations using supported official APIs
 
@@ -1238,16 +1348,19 @@ When enabled, iCloud provides cross-device synchronization between the user's iP
 
 The MVP is complete when:
 
-1. A user can paste the current Jiuzhaigou Markdown itinerary and review the parsed result.
-2. Import creates a trip with correct dates, days, timeline items, flights, trains, hotels, attractions, and ground transport.
-3. Cost columns are excluded from structured data without losing the original Markdown.
-4. The Overview shows the correct next item in the trip timezone.
-5. The complete trip is usable offline after import.
-6. Timeline and booking details work on both iPhone and iPad layouts.
-7. Importing an updated plan shows a change preview before modifying stored data.
-8. Local reminders remain consistent after activities are edited, reimported, or deleted.
-9. The original Markdown can be searched, copied, and exported.
-10. Unit and UI tests cover the critical import and navigation flows.
+1. A user can import valid versioned Light Trip JSON with deterministic results.
+2. Invalid JSON produces field-addressable errors and never creates partial data.
+3. A user can paste the current Jiuzhaigou Markdown itinerary and review the parsed result.
+4. Import creates a trip with correct dates, days, timeline items, flights, trains, hotels, attractions, and ground transport.
+5. Cost columns are excluded from structured data without losing the original source.
+6. The Overview shows the correct next item in the trip timezone.
+7. The complete trip is usable offline after import.
+8. Timeline and booking details work on both iPhone and iPad layouts.
+9. Importing an updated plan shows a change preview before modifying stored data.
+10. Local reminders remain consistent after activities are edited, reimported, or deleted.
+11. The original JSON or Markdown source can be searched, copied, and exported.
+12. Structured records can be exported as valid Light Trip JSON.
+13. Unit and UI tests cover the critical import and navigation flows.
 
 ## 18. Open decisions
 
@@ -1257,3 +1370,4 @@ These decisions do not block the initial project scaffold, but they should be fi
 2. Whether ticket image/PDF attachments move into the MVP.
 3. Whether the first release is Simplified Chinese only or bilingual English and Simplified Chinese.
 4. Whether a trip may have multiple editors in a future shared-trip feature.
+5. Whether LLM-assisted parsing uses an on-device model, a cloud provider, or both.
