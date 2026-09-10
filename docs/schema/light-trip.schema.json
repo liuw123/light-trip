@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://light-trip.app/schema/v1/light-trip.schema.json",
+  "title": "Light Trip JSON contract",
+  "type": "object",
+  "required": ["schemaVersion", "trip", "days", "bookings", "reminders"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "trip": { "$ref": "#/$defs/trip" },
+    "days": { "type": "array", "items": { "$ref": "#/$defs/day" } },
+    "bookings": { "type": "array", "items": { "$ref": "#/$defs/booking" } },
+    "reminders": { "type": "array", "items": { "$ref": "#/$defs/reminder" } }
+  },
+  "$defs": {
+    "uuid": { "type": "string", "format": "uuid" },
+    "date": { "type": "string", "format": "date" },
+    "time": { "type": "string", "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$" },
+    "nullableString": { "type": ["string", "null"] },
+    "trip": {
+      "type": "object",
+      "required": ["id", "title", "destination", "startDate", "endDate", "timeZone"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" }, "title": { "type": "string", "minLength": 1 },
+        "destination": { "type": "string", "minLength": 1 }, "startDate": { "$ref": "#/$defs/date" },
+        "endDate": { "$ref": "#/$defs/date" }, "timeZone": { "type": "string", "minLength": 1 },
+        "travelerCount": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "day": {
+      "type": "object",
+      "required": ["id", "date", "sequence", "title", "items"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" }, "date": { "$ref": "#/$defs/date" },
+        "sequence": { "type": "integer", "minimum": 0 }, "title": { "type": "string", "minLength": 1 },
+        "summary": { "$ref": "#/$defs/nullableString" },
+        "importantNotes": { "type": ["array", "null"], "items": { "type": "string" } },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/timelineItem" } }
+      }
+    },
+    "timelineItem": {
+      "type": "object",
+      "required": ["id", "title", "category", "sequence"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" }, "title": { "type": "string", "minLength": 1 },
+        "category": { "enum": ["transport", "activity", "accommodation", "meal", "breakTime", "reminder", "other"] },
+        "startTime": { "anyOf": [{ "$ref": "#/$defs/time" }, { "type": "null" }] },
+        "endTime": { "anyOf": [{ "$ref": "#/$defs/time" }, { "type": "null" }] },
+        "isUntimed": { "type": ["boolean", "null"] }, "origin": { "$ref": "#/$defs/nullableString" },
+        "destination": { "$ref": "#/$defs/nullableString" }, "locationName": { "$ref": "#/$defs/nullableString" },
+        "meetingPoint": { "$ref": "#/$defs/nullableString" }, "notes": { "$ref": "#/$defs/nullableString" },
+        "bufferMinutes": { "type": ["integer", "null"], "minimum": 0 },
+        "latestSafeDeparture": { "anyOf": [{ "$ref": "#/$defs/time" }, { "type": "null" }] },
+        "officialURL": { "type": ["string", "null"], "format": "uri" }, "contactPhone": { "$ref": "#/$defs/nullableString" },
+        "requiresConfirmation": { "type": ["boolean", "null"] }, "sequence": { "type": "integer", "minimum": 0 },
+        "bookingIDs": { "type": ["array", "null"], "items": { "$ref": "#/$defs/uuid" } }
+      }
+    },
+    "booking": {
+      "type": "object",
+      "required": ["id", "category", "provider", "status", "details"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" }, "category": { "enum": ["flight", "train", "hotel", "attraction", "groundTransport", "other"] },
+        "provider": { "type": "string", "minLength": 1 }, "status": { "enum": ["planned", "needsConfirmation", "confirmed", "completed", "cancelled"] },
+        "reference": { "$ref": "#/$defs/nullableString" }, "startDateTime": { "type": ["string", "null"] },
+        "endDateTime": { "type": ["string", "null"] }, "officialURL": { "type": ["string", "null"], "format": "uri" },
+        "contactPhone": { "$ref": "#/$defs/nullableString" }, "notes": { "$ref": "#/$defs/nullableString" },
+        "details": { "$ref": "#/$defs/details" },
+        "timelineItemIDs": { "type": ["array", "null"], "items": { "$ref": "#/$defs/uuid" } }
+      }
+    },
+    "details": {
+      "type": "object",
+      "required": ["type", "value"],
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "const": "flight" },
+            "value": { "type": "object", "required": ["flightNumber", "originAirport", "destinationAirport"], "properties": { "flightNumber": { "type": "string" }, "originAirport": { "type": "string" }, "destinationAirport": { "type": "string" } } }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "train" },
+            "value": { "type": "object", "required": ["trainNumber", "originStation", "destinationStation"], "properties": { "trainNumber": { "type": "string" }, "originStation": { "type": "string" }, "destinationStation": { "type": "string" } } }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "hotel" },
+            "value": { "type": "object", "required": ["propertyName"], "properties": { "propertyName": { "type": "string" } } }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "attraction" },
+            "value": { "type": "object", "required": ["attractionName"], "properties": { "attractionName": { "type": "string" } } }
+          }
+        },
+        { "properties": { "type": { "const": "groundTransport" }, "value": { "type": "object" } } },
+        { "properties": { "type": { "const": "other" }, "value": { "type": "object", "required": ["fields"], "properties": { "fields": { "type": "object", "additionalProperties": { "type": "string" } } } } } }
+      ]
+    },
+    "reminder": {
+      "type": "object", "required": ["id", "offsetMinutes", "title", "isEnabled"],
+      "properties": {
+        "id": { "$ref": "#/$defs/uuid" }, "timelineItemID": { "anyOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }] },
+        "offsetMinutes": { "type": "integer", "minimum": 0 }, "title": { "type": "string", "minLength": 1 }, "isEnabled": { "type": "boolean" }
+      }
+    }
+  }
+}
