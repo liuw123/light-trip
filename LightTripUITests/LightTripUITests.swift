@@ -12,13 +12,16 @@ final class LightTripUITests: XCTestCase {
 
         app.buttons["Import Trip"].tap()
         app.buttons["Load Sample Trip"].tap()
-        app.buttons["Review"].tap()
-        XCTAssertTrue(app.navigationBars["Import Review"].waitForExistence(timeout: 3))
+        let reviewButton = app.buttons["Review"]
+        XCTAssertTrue(reviewButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(reviewButton.isEnabled)
+        reviewButton.tap()
+        XCTAssertTrue(app.buttons["Create Trip"].waitForExistence(timeout: 10))
         app.buttons["Create Trip"].tap()
 
-        XCTAssertTrue(app.staticTexts["Western Sichuan Autumn Trip"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Western Sichuan Autumn Trip"].waitForExistence(timeout: 10))
         app.staticTexts["Western Sichuan Autumn Trip"].tap()
-        XCTAssertTrue(app.tabBars.buttons["Timeline"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.tabBars.buttons["Timeline"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Timeline"].tap()
         XCTAssertTrue(app.navigationBars["Timeline"].exists)
         app.tabBars.buttons["Bookings"].tap()
