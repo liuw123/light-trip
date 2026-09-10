@@ -49,7 +49,7 @@ final class TripDay {
     var sequence: Int
     var title: String
     var summary: String?
-    var importantNotes: [String]
+    var importantNotesData: Data
     var trip: Trip?
 
     @Relationship(deleteRule: .cascade, inverse: \TimelineItem.day)
@@ -62,7 +62,7 @@ final class TripDay {
         self.sequence = sequence
         self.title = title
         self.summary = summary
-        self.importantNotes = importantNotes
+        self.importantNotesData = (try? JSONEncoder().encode(importantNotes)) ?? Data()
     }
 
     var sortedItems: [TimelineItem] {
@@ -72,6 +72,11 @@ final class TripDay {
             default: $0.sequence < $1.sequence
             }
         }
+    }
+
+    var importantNotes: [String] {
+        get { (try? JSONDecoder().decode([String].self, from: importantNotesData)) ?? [] }
+        set { importantNotesData = (try? JSONEncoder().encode(newValue)) ?? Data() }
     }
 }
 
