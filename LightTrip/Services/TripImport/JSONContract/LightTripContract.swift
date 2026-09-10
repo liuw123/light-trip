@@ -139,7 +139,7 @@ struct LightTripContractDecoder: Sendable {
                     category: item.category,
                     startDate: ContractDate.localTime(item.startTime, on: dayDate, calendar: calendar),
                     endDate: ContractDate.localTime(item.endTime, on: dayDate, calendar: calendar),
-                    isUntimed: item.isUntimed ?? item.startTime == nil,
+                    isUntimed: item.isUntimed ?? (item.startTime == nil),
                     origin: item.origin,
                     destination: item.destination,
                     locationName: item.locationName,
