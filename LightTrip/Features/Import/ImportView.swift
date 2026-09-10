@@ -12,7 +12,6 @@ struct ImportView: View {
     @State private var targetTrip: Trip?
     @State private var showingFileImporter = false
     @State private var draft: TripImportDraft?
-    @State private var showingReview = false
     @State private var errorMessage: String?
 
     init(targetTrip: Trip? = nil) {
@@ -60,15 +59,15 @@ struct ImportView: View {
                     source = try String(contentsOf: url, encoding: .utf8); sourceName = url.lastPathComponent
                 } catch { errorMessage = error.localizedDescription }
             }
-            .fullScreenCover(isPresented: $showingReview) {
-                if let draft { ImportReviewView(draft: draft, targetTrip: targetTrip) { dismiss() } }
+            .fullScreenCover(item: $draft) { draft in
+                ImportReviewView(draft: draft, targetTrip: targetTrip) { dismiss() }
             }
             .alert("Unable to import", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) { Button("OK") {} } message: { Text(errorMessage ?? "") }
         }
     }
 
     private func parse() {
-        do { draft = try TripImportService().parse(source, sourceName: sourceName, override: format); showingReview = true }
+        do { draft = try TripImportService().parse(source, sourceName: sourceName, override: format) }
         catch { errorMessage = error.localizedDescription }
     }
 
