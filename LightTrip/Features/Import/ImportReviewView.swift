@@ -23,7 +23,7 @@ struct ImportReviewView: View {
                     LabeledContent("Timeline items", value: "\(draft.itemCount - excludedItems.count)")
                     LabeledContent("Bookings", value: "\(draft.bookings.count - excludedBookings.count)")
                 }
-                if let targetTrip {
+                if targetTrip != nil {
                     Section("Update preview") {
                         LabeledContent("Add", value: "\(updateDiff.added) records")
                         LabeledContent("Modify", value: "\(updateDiff.modified) records")
