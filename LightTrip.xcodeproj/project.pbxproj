@@ -1,0 +1,216 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+		A00000000000000000000001 = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LightTrip;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000002 = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LightTripTests;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000007 = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LightTripUITests;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000003 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000001,
+				A00000000000000000000002,
+				A00000000000000000000007,
+				A00000000000000000000004,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000004 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000005,
+				A00000000000000000000006,
+				A00000000000000000000008,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000005 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			path = LightTrip.app;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A00000000000000000000006 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = LightTripTests.xctest;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A00000000000000000000008 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = LightTripUITests.xctest;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A00000000000000000000010 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00000000000000000000011 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00000000000000000000012 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00000000000000000000013 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00000000000000000000014 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00000000000000000000015 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00000000000000000000016 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A00000000000000000000017 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A00000000000000000000018 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A00000000000000000000020 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000030;
+			buildPhases = (
+				A00000000000000000000010,
+				A00000000000000000000011,
+				A00000000000000000000012,
+			);
+			buildRules = ();
+			dependencies = ();
+			fileSystemSynchronizedGroups = (A00000000000000000000001,);
+			name = LightTrip;
+			packageProductDependencies = ();
+			productName = LightTrip;
+			productReference = A00000000000000000000005;
+			productType = "com.apple.product-type.application";
+		};
+		A00000000000000000000021 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000031;
+			buildPhases = (
+				A00000000000000000000013,
+				A00000000000000000000014,
+				A00000000000000000000015,
+			);
+			buildRules = ();
+			dependencies = (A00000000000000000000022,);
+			fileSystemSynchronizedGroups = (A00000000000000000000002,);
+			name = LightTripTests;
+			packageProductDependencies = ();
+			productName = LightTripTests;
+			productReference = A00000000000000000000006;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A00000000000000000000024 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000033;
+			buildPhases = (A00000000000000000000016,A00000000000000000000017,A00000000000000000000018,);
+			buildRules = ();
+			dependencies = (A00000000000000000000025,);
+			fileSystemSynchronizedGroups = (A00000000000000000000007,);
+			name = LightTripUITests;
+			packageProductDependencies = ();
+			productName = LightTripUITests;
+			productReference = A00000000000000000000008;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		A00000000000000000000025 = {isa = PBXTargetDependency; target = A00000000000000000000020; targetProxy = A00000000000000000000026; };
+		A00000000000000000000026 = {isa = PBXContainerItemProxy; containerPortal = A00000000000000000000040; proxyType = 1; remoteGlobalIDString = A00000000000000000000020; remoteInfo = LightTrip; };
+		A00000000000000000000022 = {
+			isa = PBXTargetDependency;
+			target = A00000000000000000000020;
+			targetProxy = A00000000000000000000023;
+		};
+		A00000000000000000000023 = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000040;
+			proxyType = 1;
+			remoteGlobalIDString = A00000000000000000000020;
+			remoteInfo = LightTrip;
+		};
+		A00000000000000000000030 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (A00000000000000000000050,A00000000000000000000051,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00000000000000000000031 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (A00000000000000000000052,A00000000000000000000053,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00000000000000000000032 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (A00000000000000000000054,A00000000000000000000055,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00000000000000000000033 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000056,A00000000000000000000057,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A00000000000000000000040 = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					A00000000000000000000020 = { CreatedOnToolsVersion = 26.0; };
+					A00000000000000000000021 = { CreatedOnToolsVersion = 26.0; TestTargetID = A00000000000000000000020; };
+					A00000000000000000000024 = { CreatedOnToolsVersion = 26.0; TestTargetID = A00000000000000000000020; };
+				};
+			};
+			buildConfigurationList = A00000000000000000000032;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en,Base,"zh-Hans");
+			mainGroup = A00000000000000000000003;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A00000000000000000000004;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A00000000000000000000020,A00000000000000000000021,A00000000000000000000024,);
+		};
+		A00000000000000000000050 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "Light Trip"; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LightTrip; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		A00000000000000000000051 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "Light Trip"; INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LightTrip; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SUPPORTS_MACCATALYST = NO; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+		A00000000000000000000052 = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LightTripTests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LightTrip.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LightTrip"; }; name = Debug; };
+		A00000000000000000000053 = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LightTripTests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LightTrip.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LightTrip"; }; name = Release; };
+		A00000000000000000000054 = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_CXX_LANGUAGE_STANDARD = "gnu++20"; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CLANG_WARN_BOOL_CONVERSION = YES; CLANG_WARN_CONSTANT_CONVERSION = YES; CLANG_WARN_DOCUMENTATION_COMMENTS = YES; CLANG_WARN_EMPTY_BODY = YES; CLANG_WARN_ENUM_CONVERSION = YES; CLANG_WARN_INFINITE_RECURSION = YES; CLANG_WARN_INT_CONVERSION = YES; CLANG_WARN_OBJC_LITERAL_CONVERSION = YES; CLANG_WARN_RANGE_LOOP_ANALYSIS = YES; CLANG_WARN_STRICT_PROTOTYPES = YES; COPY_PHASE_STRIP = NO; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_STRICT_OBJC_MSGSEND = YES; ENABLE_TESTABILITY = YES; GCC_C_LANGUAGE_STANDARD = gnu17; GCC_NO_COMMON_BLOCKS = YES; GCC_OPTIMIZATION_LEVEL = 0; GCC_PREPROCESSOR_DEFINITIONS = ("DEBUG=1","$(inherited)"); IPHONEOS_DEPLOYMENT_TARGET = 17.0; MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE; ONLY_ACTIVE_ARCH = YES; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)"; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+		A00000000000000000000055 = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_CXX_LANGUAGE_STANDARD = "gnu++20"; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CLANG_WARN_BOOL_CONVERSION = YES; CLANG_WARN_CONSTANT_CONVERSION = YES; CLANG_WARN_DOCUMENTATION_COMMENTS = YES; CLANG_WARN_EMPTY_BODY = YES; CLANG_WARN_ENUM_CONVERSION = YES; CLANG_WARN_INFINITE_RECURSION = YES; CLANG_WARN_INT_CONVERSION = YES; CLANG_WARN_OBJC_LITERAL_CONVERSION = YES; CLANG_WARN_RANGE_LOOP_ANALYSIS = YES; CLANG_WARN_STRICT_PROTOTYPES = YES; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; ENABLE_NS_ASSERTIONS = NO; GCC_C_LANGUAGE_STANDARD = gnu17; GCC_NO_COMMON_BLOCKS = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; MTL_ENABLE_DEBUG_INFO = NO; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; VALIDATE_PRODUCT = YES; }; name = Release; };
+		A00000000000000000000056 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LightTripUITests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = LightTrip; }; name = Debug; };
+		A00000000000000000000057 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LightTripUITests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = LightTrip; }; name = Release; };
+	};
+	rootObject = A00000000000000000000040;
+}
