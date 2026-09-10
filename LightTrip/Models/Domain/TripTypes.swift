@@ -176,7 +176,7 @@ struct ReminderDraft: Identifiable, Codable, Hashable, Sendable {
     var isEnabled: Bool
 }
 
-struct TripImportDraft: Sendable {
+struct TripImportDraft: Identifiable, Sendable {
     var trip: TripDraft
     var days: [TripDayDraft]
     var bookings: [BookingDraft]
@@ -189,6 +189,7 @@ struct TripImportDraft: Sendable {
     var parserVersion: Int?
     var sourceName: String?
 
+    var id: UUID { trip.id }
     var itemCount: Int { days.reduce(0) { $0 + $1.items.count } }
     var hasErrors: Bool { diagnostics.contains { $0.severity == .error } }
 }
