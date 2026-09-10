@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "trip": {
+    "id": "7c7d5c44-67c1-4f18-913b-c7bf21cb403a",
+    "title": "Western Sichuan Autumn Trip",
+    "destination": "Chengdu, Huanglong, and Jiuzhaigou",
+    "startDate": "2026-10-04",
+    "endDate": "2026-10-08",
+    "timeZone": "Asia/Shanghai",
+    "travelerCount": 2
+  },
+  "days": [
+    { "id": "10000000-0000-4000-8000-000000000001", "date": "2026-10-04", "sequence": 1, "title": "Arrive in Chengdu", "items": [
+      { "id": "20000000-0000-4000-8000-000000000001", "title": "Fly to Chengdu", "category": "transport", "startTime": "12:30", "endTime": "15:40", "origin": "Shanghai Hongqiao Airport", "destination": "Chengdu Shuangliu Airport", "bufferMinutes": 90, "sequence": 1, "bookingIDs": ["30000000-0000-4000-8000-000000000001"] }
+    ]},
+    { "id": "10000000-0000-4000-8000-000000000002", "date": "2026-10-05", "sequence": 2, "title": "Huanglong and Jiuzhaigou", "items": [
+      { "id": "20000000-0000-4000-8000-000000000002", "title": "Train to Huanglongjiuzhai", "category": "transport", "startTime": "08:12", "endTime": "10:01", "origin": "Chengdu East Railway Station", "destination": "Huanglongjiuzhai Station", "bufferMinutes": 30, "sequence": 1, "bookingIDs": ["30000000-0000-4000-8000-000000000002"] },
+      { "id": "20000000-0000-4000-8000-000000000003", "title": "Visit Huanglong", "category": "activity", "startTime": "11:20", "endTime": "15:30", "locationName": "Huanglong Scenic Area", "requiresConfirmation": true, "sequence": 2, "bookingIDs": ["30000000-0000-4000-8000-000000000003"] }
+    ]},
+    { "id": "10000000-0000-4000-8000-000000000003", "date": "2026-10-06", "sequence": 3, "title": "Jiuzhaigou Full Day", "items": [
+      { "id": "20000000-0000-4000-8000-000000000004", "title": "Jiuzhaigou by VIP bus", "category": "activity", "startTime": "08:20", "endTime": "17:00", "locationName": "Jiuzhaigou National Park", "bufferMinutes": 30, "requiresConfirmation": true, "sequence": 1, "bookingIDs": ["30000000-0000-4000-8000-000000000004"] }
+    ]},
+    { "id": "10000000-0000-4000-8000-000000000004", "date": "2026-10-07", "sequence": 4, "title": "Jiuzhaigou Half Day and Chengdu", "items": [
+      { "id": "20000000-0000-4000-8000-000000000005", "title": "Reserved car to station", "category": "transport", "startTime": "12:50", "endTime": "15:50", "latestSafeDeparture": "12:50", "origin": "Jiuzhaigou", "destination": "Huanglongjiuzhai Station", "bufferMinutes": 60, "sequence": 1, "bookingIDs": ["30000000-0000-4000-8000-000000000005"] }
+    ]},
+    { "id": "10000000-0000-4000-8000-000000000005", "date": "2026-10-08", "sequence": 5, "title": "Depart Chengdu", "items": [
+      { "id": "20000000-0000-4000-8000-000000000006", "title": "Fly to Shanghai", "category": "transport", "startTime": "16:00", "endTime": "18:35", "origin": "Chengdu Tianfu Airport", "destination": "Shanghai Pudong Airport", "bufferMinutes": 120, "sequence": 1, "bookingIDs": ["30000000-0000-4000-8000-000000000006"] }
+    ]}
+  ],
+  "bookings": [
+    { "id": "30000000-0000-4000-8000-000000000001", "category": "flight", "provider": "Example Airline", "status": "confirmed", "details": { "type": "flight", "value": { "flightNumber": "MU0001", "originAirport": "Shanghai Hongqiao Airport", "destinationAirport": "Chengdu Shuangliu Airport" } }, "timelineItemIDs": ["20000000-0000-4000-8000-000000000001"] },
+    { "id": "30000000-0000-4000-8000-000000000002", "category": "train", "provider": "China Railway", "status": "confirmed", "details": { "type": "train", "value": { "trainNumber": "C0001", "originStation": "Chengdu East", "destinationStation": "Huanglongjiuzhai", "seatClass": "First class" } }, "timelineItemIDs": ["20000000-0000-4000-8000-000000000002"] },
+    { "id": "30000000-0000-4000-8000-000000000003", "category": "attraction", "provider": "Huanglong Scenic Area", "status": "needsConfirmation", "details": { "type": "attraction", "value": { "attractionName": "Huanglong Scenic Area", "ticketType": "Admission, cableway, and bus" } }, "timelineItemIDs": ["20000000-0000-4000-8000-000000000003"] },
+    { "id": "30000000-0000-4000-8000-000000000004", "category": "attraction", "provider": "Jiuzhaigou National Park", "status": "needsConfirmation", "details": { "type": "attraction", "value": { "attractionName": "Jiuzhaigou National Park", "ticketType": "Admission and official VIP bus" } }, "timelineItemIDs": ["20000000-0000-4000-8000-000000000004"] },
+    { "id": "30000000-0000-4000-8000-000000000005", "category": "groundTransport", "provider": "Example Car Service", "status": "confirmed", "details": { "type": "groundTransport", "value": { "origin": "Jiuzhaigou", "destination": "Huanglongjiuzhai Station" } }, "timelineItemIDs": ["20000000-0000-4000-8000-000000000005"] },
+    { "id": "30000000-0000-4000-8000-000000000006", "category": "flight", "provider": "Example Airline", "status": "confirmed", "details": { "type": "flight", "value": { "flightNumber": "MU0002", "originAirport": "Chengdu Tianfu Airport", "destinationAirport": "Shanghai Pudong Airport" } }, "timelineItemIDs": ["20000000-0000-4000-8000-000000000006"] }
+  ],
+  "reminders": [
+    { "id": "40000000-0000-4000-8000-000000000001", "timelineItemID": "20000000-0000-4000-8000-000000000002", "offsetMinutes": 30, "title": "Leave for the station", "isEnabled": false }
+  ]
+}
